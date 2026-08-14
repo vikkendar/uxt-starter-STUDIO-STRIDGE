@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Studio Stridge — Drop 001: Ground Origami</title>
+<meta name="description" content="Studio Stridge makes a short list of heavyweight essentials, released one numbered drop at a time. Drop 001: Ground Origami is live now.">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0b0b0c;
+    --ink-soft:#17171a;
+    --paper:#faf9f6;
+    --paper-dim:#efeee9;
+    --card:#ffffff;
+    --line:#dcdbd4;
+    --line-dark:#2c2c2f;
+    --mute:#6f6e68;
+    --mute-dark:#9a9a96;
+    --signal:#1e3fe0;
+    --signal-dim:#e8ecfc;
+    --radius:2px;
+    --wrap:1180px;
+    --ease:cubic-bezier(.16,.84,.44,1);
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Inter',system-ui,sans-serif;
+    font-size:16px;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  img{max-width:100%;display:block;}
+  a{color:inherit;}
+  h1,h2,h3{
+    font-family:'Space Grotesk',system-ui,sans-serif;
+    margin:0;
+    letter-spacing:-0.01em;
+  }
+  .mono{
+    font-family:'JetBrains Mono',ui-monospace,monospace;
+  }
+  .wrap{
+    max-width:var(--wrap);
+    margin:0 auto;
+    padding:0 28px;
+  }
+  section{position:relative;}
+  ::selection{background:var(--signal);color:#fff;}
+  :focus-visible{outline:2px solid var(--signal);outline-offset:3px;}
+
+  /* ---------- reveal-on-scroll ---------- */
+  .reveal{opacity:0;transform:translateY(18px);transition:opacity .7s var(--ease),transform .7s var(--ease);}
+  .reveal.in{opacity:1;transform:translateY(0);}
+  @media (prefers-reduced-motion:reduce){
+    .reveal{opacity:1;transform:none;transition:none;}
+    html{scroll-behavior:auto;}
+  }
+
+  /* ---------- badge mark ---------- */
+  .mark{
+    background:var(--ink);
+    border-radius:6px;
+    display:inline-flex;
+    flex:none;
+  }
+  .mark svg{display:block;}
+
+  /* ---------- tag chip ---------- */
+  .tag{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    letter-spacing:.09em;
+    text-transform:uppercase;
+    padding:7px 12px 7px 20px;
+    border:1px solid var(--line);
+    border-radius:3px;
+    position:relative;
+    color:var(--mute);
+    white-space:nowrap;
+  }
+  .tag::before{
+    content:"";
+    position:absolute;left:9px;top:50%;
+    width:5px;height:5px;border-radius:50%;
+    border:1px solid currentColor;
+    transform:translateY(-50%);
+  }
+  .tag.on-dark{border-color:var(--line-dark);color:var(--mute-dark);}
+  .tag.signal{border-color:var(--signal);color:var(--signal);}
+  .tag .dot-live{
+    width:6px;height:6px;border-radius:50%;background:var(--signal);
+    margin-right:2px;flex:none;
+  }
+
+  /* ---------- buttons ---------- */
+  .btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    font-family:'Inter',sans-serif;
+    font-weight:600;
+    font-size:14px;
+    letter-spacing:.01em;
+    padding:14px 24px;
+    border-radius:3px;
+    border:1px solid transparent;
+    cursor:pointer;
+    transition:transform .25s var(--ease),background .25s var(--ease),color .25s var(--ease),border-color .25s var(--ease);
+    text-decoration:none;
+  }
+  .btn:hover{transform:translateY(-2px);}
+  .btn-solid-paper{background:var(--paper);color:var(--ink);}
+  .btn-solid-paper:hover{background:#fff;}
+  .btn-outline-paper{border-color:var(--line-dark);color:var(--paper);}
+  .btn-outline-paper:hover{border-color:var(--paper);}
+  .btn-solid-ink{background:var(--ink);color:var(--paper);}
+  .btn-solid-ink:hover{background:var(--ink-soft);}
+  .btn-outline-ink{border-color:var(--line);color:var(--ink);}
+  .btn-outline-ink:hover{border-color:var(--ink);}
+  .btn-block{width:100%;}
+
+  /* ---------- nav ---------- */
+  .nav{
+    position:sticky;top:0;z-index:50;
+    background:rgba(250,249,246,.86);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav-row{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:16px 28px;
+    max-width:var(--wrap);margin:0 auto;
+  }
+  .nav-brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink);}
+  .nav-brand .mark{width:30px;height:30px;}
+  .nav-brand span{font-family:'Space Grotesk';font-weight:700;font-size:16px;letter-spacing:.01em;}
+  .nav-links{display:flex;align-items:center;gap:28px;list-style:none;margin:0;padding:0;}
+  .nav-links a{
+    font-size:13px;letter-spacing:.03em;text-transform:uppercase;
+    text-decoration:none;color:var(--mute);font-weight:500;
+    padding-bottom:2px;border-bottom:1px solid transparent;
+    transition:color .2s,border-color .2s;
+  }
+  .nav-links a:hover{color:var(--ink);border-color:var(--ink);}
+  .nav-cta{display:flex;align-items:center;gap:16px;}
+  .nav-menu-btn{display:none;background:none;border:1px solid var(--line);border-radius:3px;padding:8px 10px;cursor:pointer;}
+  .nav-menu-btn span,.nav-menu-btn span::before,.nav-menu-btn span::after{
+    content:"";display:block;width:16px;height:1.5px;background:var(--ink);position:relative;
+  }
+  .nav-menu-btn span::before{position:absolute;top:-5px;}
+  .nav-menu-btn span::after{position:absolute;top:5px;}
+
+  /* ---------- hero ---------- */
+  .hero{
+    background:var(--ink);
+    color:var(--paper);
+    padding:120px 0 100px;
+    overflow:hidden;
+    position:relative;
+  }
+  .hero::after{
+    content:"";
+    position:absolute;inset:0;
+    background:
+      linear-gradient(var(--line-dark) 1px,transparent 1px) 0 0/100% 64px;
+    opacity:.35;
+    mask-image:linear-gradient(to bottom,transparent,black 40%,transparent 95%);
+    pointer-events:none;
+  }
+  .hero-inner{position:relative;z-index:1;text-align:center;}
+  .hero .mark{width:96px;height:96px;margin:0 auto 32px;}
+  .hero-eyebrow{display:flex;justify-content:center;margin-bottom:28px;}
+  .hero h1{
+    font-size:clamp(40px,7vw,84px);
+    line-height:1.02;
+    font-weight:700;
+    max-width:16ch;
+    margin:0 auto;
+  }
+  .hero p.lede{
+    max-width:44ch;margin:26px auto 0;
+    color:var(--mute-dark);font-size:17px;line-height:1.6;
+  }
+  .hero-ctas{display:flex;gap:14px;justify-content:center;margin-top:40px;flex-wrap:wrap;}
+  .hero-specs{
+    display:flex;justify-content:center;gap:10px;margin-top:56px;flex-wrap:wrap;
+  }
+
+  /* ---------- section headers ---------- */
+  .sec-head{
+    display:flex;align-items:flex-end;justify-content:space-between;
+    gap:24px;margin-bottom:48px;flex-wrap:wrap;
+  }
+  .sec-head h2{font-size:clamp(28px,4vw,42px);font-weight:700;}
+  .sec-eyebrow{margin-bottom:14px;}
+
+  /* ---------- drop story ---------- */
+  .drop{
+    padding:110px 0;
+    background:var(--paper);
+  }
+  .drop-grid{
+    display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center;
+  }
+  .drop-copy p{color:var(--mute);font-size:16px;line-height:1.75;margin:0 0 16px;}
+  .drop-specs{display:flex;flex-direction:column;gap:10px;margin-top:32px;}
+  .drop-img-wrap{
+    position:relative;
+    border-radius:4px;
+    overflow:hidden;
+    border:1px solid var(--line);
+    background:#fff;
+  }
+  .drop-img-wrap img{width:100%;}
+  .drop-img-tag{
+    position:absolute;bottom:16px;left:16px;
+    background:var(--paper);
+  }
+
+  /* ---------- lookbook ---------- */
+  .lookbook{background:var(--paper-dim);padding:100px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);}
+  .look-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;}
+  .look-card{position:relative;border-radius:4px;overflow:hidden;background:#fff;border:1px solid var(--line);}
+  .look-card img{width:100%;transition:transform .6s var(--ease);}
+  .look-card:hover img{transform:scale(1.035);}
+  .look-cap{
+    position:absolute;bottom:0;left:0;right:0;
+    padding:18px;
+    display:flex;justify-content:space-between;align-items:flex-end;
+    background:linear-gradient(to top,rgba(11,11,12,.55),transparent);
+  }
+  .look-cap span{color:#fff;font-family:'JetBrains Mono';font-size:11px;letter-spacing:.09em;text-transform:uppercase;}
+
+  /* ---------- shop ---------- */
+  .shop{padding:110px 0;background:var(--paper);}
+  .shop-grid{display:grid;grid-template-columns:1fr 1fr;gap:32px;}
+  .product{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:4px;
+    overflow:hidden;
+    display:flex;flex-direction:column;
+    transition:transform .3s var(--ease),box-shadow .3s var(--ease);
+  }
+  .product:hover{transform:translateY(-4px);box-shadow:0 20px 40px -20px rgba(11,11,12,.25);}
+  .product-media{aspect-ratio:1/1;background:#fdfdfc;border-bottom:1px solid var(--line);}
+  .product-media img{width:100%;height:100%;object-fit:contain;}
+  .product-body{padding:26px 26px 28px;display:flex;flex-direction:column;gap:16px;flex:1;}
+  .product-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;}
+  .product-name{font-family:'Space Grotesk';font-weight:700;font-size:21px;}
+  .product-no{color:var(--mute);font-family:'JetBrains Mono';font-size:12px;letter-spacing:.06em;display:block;margin-bottom:6px;}
+  .product-price{font-family:'JetBrains Mono';font-size:18px;font-weight:500;flex:none;}
+  .product-desc{color:var(--mute);font-size:14px;line-height:1.6;margin:0;}
+  .product-specs{display:flex;flex-wrap:wrap;gap:8px;}
+  .size-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:auto;}
+  .size-pill{
+    font-family:'JetBrains Mono';font-size:12px;
+    border:1px solid var(--line);border-radius:3px;
+    width:40px;height:36px;display:flex;align-items:center;justify-content:center;
+    background:none;cursor:pointer;color:var(--ink);
+    transition:border-color .2s,background .2s,color .2s;
+  }
+  .size-pill:hover{border-color:var(--ink);}
+  .size-pill.active{background:var(--ink);color:var(--paper);border-color:var(--ink);}
+
+  /* ---------- craft strip ---------- */
+  .craft{background:var(--ink);color:var(--paper);padding:110px 0;}
+  .craft-grid{display:grid;grid-template-columns:0.9fr 1.1fr;gap:64px;align-items:center;}
+  .craft-img-wrap{border-radius:4px;overflow:hidden;border:1px solid var(--line-dark);}
+  .care-label{
+    border:1px solid var(--line-dark);
+    border-radius:4px;
+    padding:32px;
+    background:var(--ink-soft);
+  }
+  .care-label .mark{width:38px;height:38px;margin-bottom:20px;}
+  .care-row{
+    display:flex;justify-content:space-between;
+    padding:12px 0;
+    border-bottom:1px dashed var(--line-dark);
+    font-family:'JetBrains Mono';font-size:12.5px;letter-spacing:.03em;
+  }
+  .care-row:last-child{border-bottom:none;}
+  .care-row span:first-child{color:var(--mute-dark);text-transform:uppercase;}
+  .care-row span:last-child{color:var(--paper);}
+
+  /* ---------- about ---------- */
+  .about{padding:110px 0;background:var(--paper);}
+  .about-grid{display:grid;grid-template-columns:1fr 1.4fr;gap:64px;}
+  .about-grid h2{font-size:clamp(28px,4vw,40px);font-weight:700;line-height:1.1;}
+  .about-copy p{color:var(--mute);font-size:17px;line-height:1.75;margin:0 0 18px;}
+  .about-copy p:last-child{margin-bottom:0;}
+
+  /* ---------- footer ---------- */
+  footer{background:var(--ink);color:var(--paper);padding:80px 0 32px;border-top:1px solid var(--line-dark);}
+  .foot-top{
+    display:grid;grid-template-columns:1.3fr 1fr 1fr 1.2fr;gap:48px;
+    padding-bottom:64px;border-bottom:1px solid var(--line-dark);
+  }
+  .foot-brand{display:flex;align-items:center;gap:10px;margin-bottom:16px;}
+  .foot-brand .mark{width:30px;height:30px;}
+  .foot-brand span{font-family:'Space Grotesk';font-weight:700;font-size:16px;}
+  .foot-tagline{color:var(--mute-dark);font-size:14px;max-width:32ch;line-height:1.6;}
+  .foot-h{font-family:'JetBrains Mono';font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--mute-dark);margin-bottom:18px;}
+  .foot-links{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:12px;}
+  .foot-links a{font-size:14px;text-decoration:none;color:var(--paper);opacity:.85;transition:opacity .2s;}
+  .foot-links a:hover{opacity:1;text-decoration:underline;}
+  .foot-form{display:flex;gap:8px;margin-top:6px;}
+  .foot-form input{
+    flex:1;background:var(--ink-soft);border:1px solid var(--line-dark);
+    border-radius:3px;padding:12px 14px;color:var(--paper);font-family:'Inter';font-size:14px;
+    min-width:0;
+  }
+  .foot-form input::placeholder{color:var(--mute-dark);}
+  .foot-form input:focus{outline:2px solid var(--signal);outline-offset:1px;}
+  .foot-note{color:var(--mute-dark);font-size:12px;margin-top:10px;line-height:1.6;}
+  .foot-bottom{
+    display:flex;justify-content:space-between;align-items:center;
+    padding-top:28px;flex-wrap:wrap;gap:12px;
+  }
+  .foot-bottom p{margin:0;color:var(--mute-dark);font-size:12.5px;font-family:'JetBrains Mono';}
+
+  /* ---------- responsive ---------- */
+  @media (max-width:920px){
+    .nav-links{display:none;}
+    .nav-menu-btn{display:flex;align-items:center;justify-content:center;}
+    .drop-grid,.craft-grid,.about-grid{grid-template-columns:1fr;}
+    .drop-grid{gap:40px;}
+    .craft-grid{gap:40px;}
+    .craft-img-wrap{order:2;}
+    .look-grid{grid-template-columns:1fr;}
+    .shop-grid{grid-template-columns:1fr;}
+    .foot-top{grid-template-columns:1fr 1fr;row-gap:40px;}
+  }
+  @media (max-width:560px){
+    .hero{padding:96px 0 76px;}
+    .drop,.lookbook,.shop,.craft,.about{padding:72px 0;}
+    .foot-top{grid-template-columns:1fr;}
+    .hero-ctas{flex-direction:column;width:100%;}
+    .hero-ctas .btn{width:100%;}
+  }
+</style>
+</head>
+<body>
+
+<!-- ================= NAV ================= -->
+<nav class="nav">
+  <div class="nav-row">
+    <a href="#top" class="nav-brand">
+      <span class="mark" style="width:30px;height:30px;">
+        <svg viewBox="0 0 6144 6063" width="30" height="30">
+          <circle cx="3059.43" cy="3014.67" r="2323.19" fill="#faf9f6"/>
+          <polygon points="5024.10,2106.45 4352.91,1435.29 2539.47,3248.73 1761.96,2471.19 1090.53,3142.65 2539.23,4591.32" fill="#0b0b0c"/>
+        </svg>
+      </span>
+      <span>Studio Stridge</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#drop">Drop 001</a></li>
+      <li><a href="#shop">Shop</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#join">Contact</a></li>
+    </ul>
+    <div class="nav-cta">
+      <a href="#shop" class="btn btn-solid-ink" style="padding:10px 18px;font-size:13px;">Shop drop</a>
+      <button class="nav-menu-btn" aria-label="Menu"><span></span></button>
+    </div>
+  </div>
+</nav>
+
+<!-- ================= HERO ================= -->
+<header class="hero" id="top">
+  <div class="wrap hero-inner">
+    <span class="mark">
+      <svg viewBox="0 0 6144 6063" width="96" height="96">
+        <circle cx="3059.43" cy="3014.67" r="2323.19" fill="#faf9f6"/>
+        <polygon points="5024.10,2106.45 4352.91,1435.29 2539.47,3248.73 1761.96,2471.19 1090.53,3142.65 2539.23,4591.32" fill="#0b0b0c"/>
+      </svg>
+    </span>
+    <div class="hero-eyebrow">
+      <span class="tag on-dark"><span class="dot-live"></span>Drop 001 — Live now</span>
+    </div>
+    <h1>Heavyweight basics, cut for the stride.</h1>
+    <p class="lede">Studio Stridge releases a short list of pieces at a time — one print, two silhouettes, a fixed run. When it's gone, the drop closes.</p>
+    <div class="hero-ctas">
+      <a href="#shop" class="btn btn-solid-paper">Shop Drop 001</a>
+      <a href="#drop" class="btn btn-outline-paper">The story</a>
+    </div>
+    <div class="hero-specs">
+      <span class="tag on-dark">240 / 480 GSM</span>
+      <span class="tag on-dark">100% Cotton</span>
+      <span class="tag on-dark">Run of 250</span>
+      <span class="tag on-dark">Numbered tag, sewn</span>
+    </div>
+  </div>
+</header>
+
+<!-- ================= DROP STORY ================= -->
+<section class="drop" id="drop">
+  <div class="wrap drop-grid">
+    <div class="drop-copy reveal">
+      <div class="sec-eyebrow"><span class="tag signal">Print No. 01</span></div>
+      <h2 style="font-size:clamp(30px,4.5vw,46px);margin-bottom:22px;">Ground Origami</h2>
+      <p>The first print in the Stridge catalogue folds a bird from a single unbroken line — the same crease logic used to fold a sheet of paper, redrawn in one stroke of cobalt on heavy cotton.</p>
+      <p>It sits small on the chest, four inches square, printed once per garment. Every piece is finished with a woven tag at the neck, marking it as part of the run.</p>
+      <div class="drop-specs">
+        <span class="tag">Colorway — Cobalt 072</span>
+        <span class="tag">Placement — Chest, 4×4in</span>
+        <span class="tag">Method — Screen print</span>
+      </div>
+    </div>
+    <div class="drop-img-wrap reveal">
+      <img src="assets/gro-origami.jpg" alt="Ground Origami print — a single-line cobalt bird folded like origami, on the Studio Stridge Drop 001 graphic">
+      <span class="tag drop-img-tag">Ground Origami — Print 01</span>
+    </div>
+  </div>
+</section>
+
+<!-- ================= LOOKBOOK ================= -->
+<section class="lookbook">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div>
+        <div class="sec-eyebrow"><span class="tag">Lookbook</span></div>
+        <h2>Worn, not just laid flat.</h2>
+      </div>
+    </div>
+    <div class="look-grid">
+      <div class="look-card reveal">
+        <img src="assets/tee-model.jpg" alt="Model wearing the Studio Stridge Heavyweight Tee with the Ground Origami print">
+        <div class="look-cap"><span>Look 01</span><span>Heavyweight Tee</span></div>
+      </div>
+      <div class="look-card reveal">
+        <img src="assets/hoodie-model.jpg" alt="Model wearing the Studio Stridge Relax Hoodie with the Ground Origami print">
+        <div class="look-cap"><span>Look 02</span><span>Relax Hoodie</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= SHOP ================= -->
+<section class="shop" id="shop">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div>
+        <div class="sec-eyebrow"><span class="tag signal"><span class="dot-live"></span>Drop 001</span></div>
+        <h2>Two pieces. One run.</h2>
+      </div>
+      <p style="color:var(--mute);max-width:36ch;margin:0;font-size:15px;">Both cut heavyweight, both carry the Ground Origami print, both retire when the run sells out.</p>
+    </div>
+
+    <div class="shop-grid">
+      <!-- product 1 -->
+      <article class="product reveal">
+        <div class="product-media">
+          <img src="assets/tee-front.jpg" alt="Studio Stridge Heavyweight Tee, front, white, with the Ground Origami print on the chest">
+        </div>
+        <div class="product-body">
+          <div class="product-top">
+            <div>
+              <span class="product-no">No. 01</span>
+              <h3 class="product-name">Heavyweight Tee</h3>
+            </div>
+            <span class="product-price">$48</span>
+          </div>
+          <p class="product-desc">240gsm combed cotton, boxy cut, ribbed collar. Ground Origami printed on the chest, tag sewn at the neck.</p>
+          <div class="product-specs">
+            <span class="tag">240 GSM</span>
+            <span class="tag">100% Cotton</span>
+          </div>
+          <div class="size-row" role="group" aria-label="Select a size — Heavyweight Tee">
+            <button class="size-pill">S</button>
+            <button class="size-pill active">M</button>
+            <button class="size-pill">L</button>
+            <button class="size-pill">XL</button>
+            <button class="size-pill">2XL</button>
+          </div>
+          <a href="#join" class="btn btn-solid-ink btn-block">Add to cart</a>
+        </div>
+      </article>
+
+      <!-- product 2 -->
+      <article class="product reveal">
+        <div class="product-media">
+          <img src="assets/hoodie-front.jpg" alt="Studio Stridge Relax Hoodie, front, white, with the Ground Origami print on the chest and blue sleeve stripes">
+        </div>
+        <div class="product-body">
+          <div class="product-top">
+            <div>
+              <span class="product-no">No. 02</span>
+              <h3 class="product-name">Relax Hoodie</h3>
+            </div>
+            <span class="product-price">$88</span>
+          </div>
+          <p class="product-desc">480gsm brushed fleece, relaxed fit, kangaroo pocket. Sleeve stripes mark the drop colorway.</p>
+          <div class="product-specs">
+            <span class="tag">480 GSM</span>
+            <span class="tag">Brushed interior</span>
+          </div>
+          <div class="size-row" role="group" aria-label="Select a size — Relax Hoodie">
+            <button class="size-pill">S</button>
+            <button class="size-pill">M</button>
+            <button class="size-pill active">L</button>
+            <button class="size-pill">XL</button>
+            <button class="size-pill">2XL</button>
+          </div>
+          <a href="#join" class="btn btn-solid-ink btn-block">Add to cart</a>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ================= CRAFT / TAG DETAIL ================= -->
+<section class="craft">
+  <div class="wrap craft-grid">
+    <div class="craft-img-wrap reveal">
+      <img src="assets/tee-back.jpg" alt="Close view of the woven Studio Stridge tag sewn at the back neck of the Heavyweight Tee">
+    </div>
+    <div class="reveal">
+      <div class="sec-eyebrow"><span class="tag on-dark">Every piece, tagged</span></div>
+      <h2 style="font-size:clamp(28px,4vw,40px);margin-bottom:24px;max-width:14ch;">Marked at the neck, not just the label.</h2>
+      <div class="care-label">
+        <span class="mark">
+          <svg viewBox="0 0 6144 6063" width="38" height="38">
+            <circle cx="3059.43" cy="3014.67" r="2323.19" fill="#faf9f6"/>
+            <polygon points="5024.10,2106.45 4352.91,1435.29 2539.47,3248.73 1761.96,2471.19 1090.53,3142.65 2539.23,4591.32" fill="#0b0b0c"/>
+          </svg>
+        </span>
+        <div class="care-row"><span>Drop</span><span>001 — Ground Origami</span></div>
+        <div class="care-row"><span>Material</span><span>100% Cotton</span></div>
+        <div class="care-row"><span>Wash</span><span>Machine, cold</span></div>
+        <div class="care-row"><span>Bleach</span><span>Do not bleach</span></div>
+        <div class="care-row"><span>Dry</span><span>Tumble, low</span></div>
+        <div class="care-row"><span>Run</span><span>Made to order</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= ABOUT ================= -->
+<section class="about" id="about">
+  <div class="wrap about-grid">
+    <div class="reveal">
+      <div class="sec-eyebrow"><span class="tag">About</span></div>
+      <h2>The studio</h2>
+    </div>
+    <div class="about-copy reveal">
+      <p>Studio Stridge is a small apparel studio working one drop at a time. Each release pairs a single print with two silhouettes — a tee and a hoodie — cut heavy, tagged by hand, and retired once the run sells out.</p>
+      <p>We'd rather make a short run well than a long run fast. No restocks, no filler colorways — just the next print, when it's ready.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= FOOTER ================= -->
+<footer id="join">
+  <div class="wrap">
+    <div class="foot-top">
+      <div>
+        <div class="foot-brand">
+          <span class="mark" style="width:30px;height:30px;">
+            <svg viewBox="0 0 6144 6063" width="30" height="30">
+              <circle cx="3059.43" cy="3014.67" r="2323.19" fill="#faf9f6"/>
+              <polygon points="5024.10,2106.45 4352.91,1435.29 2539.47,3248.73 1761.96,2471.19 1090.53,3142.65 2539.23,4591.32" fill="#0b0b0c"/>
+            </svg>
+          </span>
+          <span>Studio Stridge</span>
+        </div>
+        <p class="foot-tagline">Small drops of heavyweight essentials. One print, two silhouettes, a fixed run.</p>
+      </div>
+      <div>
+        <p class="foot-h">Shop</p>
+        <ul class="foot-links">
+          <li><a href="#shop">Heavyweight Tee</a></li>
+          <li><a href="#shop">Relax Hoodie</a></li>
+          <li><a href="#drop">Drop 001 story</a></li>
+        </ul>
+      </div>
+      <div>
+        <p class="foot-h">Studio</p>
+        <ul class="foot-links">
+          <li><a href="#about">About</a></li>
+          <li><a href="mailto:studiostridge@gmail.com">Contact</a></li>
+          <li><a href="#">Instagram</a></li>
+        </ul>
+      </div>
+      <div>
+        <p class="foot-h">Get the next drop first</p>
+        <form class="foot-form" onsubmit="return handleSignup(event)">
+          <input type="email" required placeholder="you@email.com" aria-label="Email address">
+          <button type="submit" class="btn btn-solid-paper" style="padding:12px 18px;font-size:13px;">Notify me</button>
+        </form>
+        <p class="foot-note" id="signupNote">No spam — one email when a new drop goes live.</p>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <p>© 2026 Studio Stridge. All rights reserved.</p>
+      <p>Drop 001 — Ground Origami</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // reveal on scroll
+  const revealEls = document.querySelectorAll('.reveal');
+  if('IntersectionObserver' in window){
+    const io = new IntersectionObserver((entries)=>{
+      entries.forEach(e=>{
+        if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
+      });
+    },{threshold:0.12});
+    revealEls.forEach(el=>io.observe(el));
+  } else {
+    revealEls.forEach(el=>el.classList.add('in'));
+  }
+
+  // size pill selection
+  document.querySelectorAll('.size-row').forEach(row=>{
+    row.addEventListener('click', (e)=>{
+      const btn = e.target.closest('.size-pill');
+      if(!btn) return;
+      row.querySelectorAll('.size-pill').forEach(p=>p.classList.remove('active'));
+      btn.classList.add('active');
+    });
+  });
+
+  // newsletter form (static demo — no backend wired up)
+  function handleSignup(e){
+    e.preventDefault();
+    const note = document.getElementById('signupNote');
+    note.textContent = "You're on the list — thanks!";
+    note.style.color = '#faf9f6';
+    e.target.reset();
+    return false;
+  }
+
+  // mobile menu -> simple anchor to nav links for now
+  document.querySelector('.nav-menu-btn').addEventListener('click', ()=>{
+    document.getElementById('shop').scrollIntoView({behavior:'smooth'});
+  });
+</script>
+
+</body>
+</html>
